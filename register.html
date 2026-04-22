@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Регистрация - SportCareer</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body class="page-{{ page_type }}">
+    <header>
+        <nav>
+            <a href="/" class="logo-link">
+                <div class="logo-text">🏆 SportCareer</div>
+            </a>
+            <ul>
+                <li><a href="/">Главная</a></li>
+                <li><a href="/about">О нас</a></li>
+                <li><a href="/contact">Контакты</a></li>
+                {% if session.user_id %}
+                    <li><a href="/profile" style="color: #3498db;">Мой профиль</a></li>
+                    <li><a href="/search" style="color: #e74c3c; font-weight: bold;">🔍 Поиск</a></li>
+                    <li><a href="/favorites" style="color: #f39c12; font-weight: bold;">⭐ Избранное</a></li>
+                    <li><a href="/logout" style="color: #e74c3c;">Выйти</a></li>
+                {% else %}
+                    <li><a href="/login" style="color: #2ecc71;">Войти</a></li>
+                {% endif %}
+            </ul>
+        </nav>
+    </header>
+
+    <main>
+        {% block content %}
+        <div class="content-block">
+            {% if session.user_id %}
+                <div class="auth-status">
+                    <h2>✅ Вы уже зарегистрированы</h2>
+                    <p>Добро пожаловать, {{ session.user_name }}!</p>
+                </div>
+                
+                <div style="text-align: center; margin-top: 2rem;">
+                    {% if page_type == 'volunteer' %}
+                        <a href="/volunteer" class="submit-btn" style="display: inline-block; text-decoration: none;">
+                            📝 Создать анкету
+                        </a>
+                    {% else %}
+                        <a href="/search" class="submit-btn" style="display: inline-block; text-decoration: none;">
+                            🔍 Найти человека
+                        </a>
+                    {% endif %}
+                    <a href="/logout" class="back-btn" style="margin-left: 1rem; background-color: #e74c3c;">
+                        🚪 Выйти из аккаунта
+                    </a>
+                </div>
+            {% else %}
+                <div class="profile-form">
+                    <h1 style="text-align: center; margin-bottom: 2rem;">
+                        {% if page_type == 'volunteer' %}
+                            📝 Регистрация для создания анкеты
+                        {% else %}
+                            🔍 Регистрация для поиска
+                        {% endif %}
+                    </h1>
+                    
+                    <form method="POST" action="{{ url_for('register', page_type=page_type) }}">
+                        {{ form.hidden_tag() }}
+                        
+                        <div class="form-section">
+                            <h3>👤 Основная информация</h3>
+                            
+                            <div class="form-row">
+                                <div class="form-group">
+                                    {{ form.name.label(class="form-label") }}
+                                    {{ form.name(class="form-input", placeholder="Введите ваше имя") }}
+                                    {% if form.name.errors %}
+                                        <div class="error-message">{{ form.name.errors[0] }}</div>
+                                    {% endif %}
+                                </div>
+                                
+                                <div class="form-group">
+                                    {{ form.surname.label(class="form-label") }}
+                                    {{ form.surname(class="form-input", placeholder="Введите вашу фамилию") }}
+                                    {% if form.surname.errors %}
+                                        <div class="error-message">{{ form.surname.errors[0] }}</div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            
+                            <div class="form-row">
+                                <div class="form-group">
+                                    {{ form.email.label(class="form-label") }}
+                                    {{ form.email(class="form-input", placeholder="Ваша эл. почта") }}
+                                    {% if form.email.errors %}
+                                        <div class="error-message">{{ form.email.errors[0] }}</div>
+                                    {% endif %}
+                                </div>
+                                
+                                <div class="form-group">
+                                    {{ form.phone.label(class="form-label") }}
+                                    {{ form.phone(class="form-input", placeholder="Ваш номер телефона") }}
+                                </div>
+                            </div>
+                            
+                            <div class="form-row">
+                                <div class="form-group">
+                                    {{ form.password.label(class="form-label") }}
+                                    {{ form.password(class="form-input", placeholder="Не менее 6 символов") }}
+                                    {% if form.password.errors %}
+                                        <div class="error-message">{{ form.password.errors[0] }}</div>
+                                    {% endif %}
+                                </div>
+                                
+                                <div class="form-group">
+                                    {{ form.confirm_password.label(class="form-label") }}
+                                    {{ form.confirm_password(class="form-input", placeholder="Повторите пароль") }}
+                                    {% if form.confirm_password.errors %}
+                                        <div class="error-message">{{ form.confirm_password.errors[0] }}</div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="form-section">
+                            <h3>⚽ Спортивная информация</h3>
+                            
+                            <div class="form-row">
+                                <div class="form-group">
+                                    {{ form.sport.label(class="form-label") }}
+                                    {{ form.sport(class="form-input") }}
+                                    {% if form.sport.errors %}
+                                        <div class="error-message">{{ form.sport.errors[0] }}</div>
+                                    {% endif %}
+                                </div>
+                                
+                                <div class="form-group">
+                                    {{ form.position.label(class="form-label") }}
+                                    {{ form.position(class="form-input", placeholder="Нападающий, защитник...") }}
+                                </div>
+                            </div>
+                            
+                            <div class="form-row">
+                                <div class="form-group">
+                                    {{ form.experience.label(class="form-label") }}
+                                    {{ form.experience(class="form-input", placeholder="0") }}
+                                </div>
+                                
+                                <div class="form-group">
+                                    {{ form.level.label(class="form-label") }}
+                                    {{ form.level(class="form-input") }}
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="form-section">
+                            <h3>🎯 Цели и местоположение</h3>
+                            
+                            <div class="form-row">
+                                <div class="form-group">
+                                    {{ form.city.label(class="form-label") }}
+                                    {{ form.city(class="form-input", placeholder="Ваше место проживания") }}
+                                    {% if form.city.errors %}
+                                        <div class="error-message">{{ form.city.errors[0] }}</div>
+                                    {% endif %}
+                                </div>
+                                
+                                <div class="form-group">
+                                    {{ form.goals.label(class="form-label") }}
+                                    <select class="form-input" name="goals" id="goals" required>
+                                        <option value="">Выберите вариант</option>
+                                        {% if page_type == 'volunteer' %}
+                                            <option value="team">Хочу найти команду</option>
+                                            <option value="partner">Ищу напарника для тренировок</option>
+                                            <option value="coach">Ищу тренера</option>
+                                            <option value="participant">Хочу участвовать в мероприятиях</option>
+                                        {% else %}
+                                            <option value="team">Хочу найти человека в команду</option>
+                                            <option value="partner">Ищу напарника для тренировок</option>
+                                            <option value="coach">Ищу тренера</option>
+                                            <option value="participant">Хочу найти участника на мероприятия</option>
+                                        {% endif %}
+                                    </select>
+                                    {% if form.goals.errors %}
+                                        <div class="error-message">{{ form.goals.errors[0] }}</div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="form-section">
+                            <h3>📝 О себе</h3>
+                            
+                            <div class="form-group">
+                                {{ form.about.label(class="form-label") }}
+                                {{ form.about(class="form-textarea", placeholder="Расскажите о себе, своих достижениях, опыте, целях... (максимум 500 символов)", rows="5") }}
+                                <div style="font-size: 0.9rem; color: #7f8c8d; margin-top: 0.5rem;">
+                                    Расскажите о себе, чтобы команды/спортсмены могли лучше вас узнать
+                                </div>
+                                {% if form.about.errors %}
+                                    <div class="error-message">{{ form.about.errors[0] }}</div>
+                                {% endif %}
+                            </div>
+                        </div>
+                        
+                        <div style="text-align: center; margin-top: 2rem;">
+                            {{ form.submit(class="submit-btn", style="padding: 15px 40px; font-size: 1.2rem;") }}
+                            
+                            <div style="margin-top: 2rem;">
+                                <p>Уже есть аккаунт? <a href="/login" style="color: #3498db;">Войти</a></p>
+                                <div style="margin-top: 1.5rem;">
+                                    {% if page_type == 'volunteer' %}
+                                        <a href="/volunteer" class="back-btn">← Назад к созданию анкеты</a>
+                                    {% else %}
+                                        <a href="/find_person" class="back-btn">← Назад к поиску</a>
+                                    {% endif %}
+                                    <a href="/" class="back-btn" style="margin-left: 1rem; background-color: #95a5a6;">На главную</a>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            {% endif %}
+        </div>
+        {% endblock %}
+    </main>
+
+    <footer>
+        <p>🏆 SportCareer</p>
+    </footer>
+</body>
+</html>

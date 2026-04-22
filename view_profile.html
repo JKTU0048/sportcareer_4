@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Профиль {{ user.name }} - SportCareer</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+    <header>
+        <nav>
+            <a href="/" class="logo-link">
+                <div class="logo-text">🏆 SportCareer</div>
+            </a>
+            <ul>
+                <li><a href="/">Главная</a></li>
+                <li><a href="/about">О нас</a></li>
+                <li><a href="/contact">Контакты</a></li>
+                {% if session.user_id %}
+                    <li><a href="/profile" style="color: #3498db;">Мой профиль</a></li>
+                    <li><a href="/search" style="color: #e74c3c;">🔍 Поиск</a></li>
+                    <li><a href="/favorites" style="color: #f39c12; font-weight: bold;">⭐ Избранное</a></li>
+                    <li><a href="/messages" style="color: #2ecc71; font-weight: bold;">✉️ Сообщения</a></li>
+                    <li><a href="/logout" style="color: #e74c3c;">Выйти</a></li>
+                {% else %}
+                    <li><a href="/login" style="color: #2ecc71;">Войти</a></li>
+                {% endif %}
+            </ul>
+        </nav>
+    </header>
+
+    <main>
+        <div class="content-block">
+            <div class="profile-view">
+                <div class="profile-header">
+                    <div>
+                        <h1 class="profile-name">
+                            {{ user.name }} {{ user.surname }}
+                            {% if user.level %}
+                                <span class="level-indicator level-{{ user.level }}">
+                                    {% if user.level == 'beginner' %}Начинающий
+                                    {% elif user.level == 'amateur' %}Любитель
+                                    {% elif user.level == 'professional' %}Профессионал
+                                    {% endif %}
+                                </span>
+                            {% endif %}
+                        </h1>
+                        <p style="color: #666; margin-top: 0.5rem;">Спортсмен • {{ user.city }}</p>
+                    </div>
+                    <div class="profile-avatar">
+                        {{ user.name[0] }}{{ user.surname[0] }}
+                    </div>
+                </div>
+                
+                <div class="profile-stats">
+                    <div class="stat-card">
+                        <div class="stat-value">{{ user.experience or 0 }}</div>
+                        <div class="stat-label">Лет опыта</div>
+                    </div>
+                    
+                    <div class="stat-card">
+                        <div class="stat-value">
+                            {% if user.sport == 'football' %}⚽
+                            {% elif user.sport == 'basketball' %}🏀
+                            {% elif user.sport == 'volleyball' %}🏐
+                            {% elif user.sport == 'hockey' %}🏒
+                            {% elif user.sport == 'tennis' %}🎾
+                            {% else %}🤸
+                            {% endif %}
+                        </div>
+                        <div class="stat-label">
+                            {% if user.sport == 'football' %}Футбол
+                            {% elif user.sport == 'basketball' %}Баскетбол
+                            {% elif user.sport == 'volleyball' %}Волейбол
+                            {% elif user.sport == 'hockey' %}Хоккей
+                            {% elif user.sport == 'tennis' %}Теннис
+                            {% elif user.sport == 'other' %}Другой
+                            {% else %}{{ user.sport }}
+                            {% endif %}
+                        </div>
+                    </div>
+                    
+                    <div class="stat-card">
+                        <div class="stat-value">
+                            {% if user.position %}{{ user.position }}{% else %}—{% endif %}
+                        </div>
+                        <div class="stat-label">Позиция</div>
+                    </div>
+                    
+                    <div class="stat-card">
+                        <div class="stat-value">
+                            {% if user.goals == 'team' %}👥
+                            {% elif user.goals == 'partner' %}🤝
+                            {% elif user.goals == 'coach' %}🏋️
+                            {% elif user.goals == 'participant' %}🎯
+                            {% else %}🎯
+                            {% endif %}
+                        </div>
+                        <div class="stat-label">
+                            {% if user.goals == 'team' %}Ищет команду
+                            {% elif user.goals == 'partner' %}Ищет напарника
+                            {% elif user.goals == 'coach' %}Ищет тренера
+                            {% elif user.goals == 'participant' %}Ищет участника
+                            {% else %}{{ user.goals }}
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="form-section">
+                    <h3>📋 О спортсмене</h3>
+                    <div class="profile-details">
+                        <div class="detail-row">
+                            <strong>Город:</strong>
+                            <span>{{ user.city }}</span>
+                        </div>
+                        
+                        {% if user.position %}
+                        <div class="detail-row">
+                            <strong>Позиция/роль:</strong>
+                            <span>{{ user.position }}</span>
+                        </div>
+                        {% endif %}
+                        
+                        <div class="detail-row">
+                            <strong>Уровень подготовки:</strong>
+                            <span>
+                                {% if user.level == 'beginner' %}Начинающий
+                                {% elif user.level == 'amateur' %}Любитель
+                                {% elif user.level == 'professional' %}Профессионал
+                                {% else %}{{ user.level or 'Не указан' }}
+                                {% endif %}
+                            </span>
+                        </div>
+                        
+                        <div class="detail-row">
+                            <strong>Цель на платформе:</strong>
+                            <span>
+                                {% if user.goals == 'team' %}Хочу найти человека в команду
+                                {% elif user.goals == 'partner' %}Ищу напарника для тренировок
+                                {% elif user.goals == 'coach' %}Ищу тренера
+                                {% elif user.goals == 'participant' %}Хочу участника на мероприятия
+                                {% else %}{{ user.goals }}
+                                {% endif %}
+                            </span>
+                        </div>
+                        
+                        {% if user.created_at %}
+                        <div class="detail-row">
+                            <strong>На платформе с:</strong>
+                            <span>{{ user.created_at.strftime('%d.%m.%Y') }}</span>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+                
+                {% if user.about %}
+                <div class="form-section">
+                    <h3>📝 О себе</h3>
+                    <div class="profile-details">
+                        <div class="detail-row" style="flex-direction: column; align-items: flex-start; padding: 1.5rem;">
+                            <div style="white-space: pre-wrap; text-align: left; color: #666; line-height: 1.6; background: rgba(52, 152, 219, 0.05); padding: 1.5rem; border-radius: 8px; border-left: 4px solid #3498db;">
+                                {{ user.about }}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% endif %}
+                
+                <div class="contact-info-card">
+                    <h3>📞 Контакты</h3>
+                    
+                    <div class="contact-info-item">
+                        <div class="contact-info-icon">📧</div>
+                        <div>
+                            <strong>Email:</strong>
+                            <div>{{ user.email }}</div>
+                        </div>
+                    </div>
+                    
+                    {% if user.phone %}
+                    <div class="contact-info-item">
+                        <div class="contact-info-icon">📱</div>
+                        <div>
+                            <strong>Телефон:</strong>
+                            <div>{{ user.phone }}</div>
+                        </div>
+                    </div>
+                    {% endif %}
+                </div>
+                
+                <div class="profile-actions">
+                    <!-- ИСПРАВЛЕНО: прямая ссылка на чат -->
+                    <a href="/messages/{{ user.id }}" class="submit-btn" style="text-decoration: none; display: inline-block;">
+                        ✉️ Написать сообщение
+                    </a>
+                    
+                    {% if is_favorite %}
+                        <button class="back-btn" onclick="removeFromFavorites('{{ user.id }}')" 
+                                style="background-color: #f39c12; color: white;">
+                            ⭐ В избранном
+                        </button>
+                    {% else %}
+                        <button class="back-btn" onclick="addToFavorites('{{ user.id }}')" 
+                                style="background-color: #f1c40f; color: #333; font-weight: bold;">
+                            ☆ Добавить в избранное
+                        </button>
+                    {% endif %}
+                    
+                    <a href="/search" class="back-btn" style="background-color: #95a5a6;">
+                        ← Назад к поиску
+                    </a>
+                </div>
+                
+                <div style="text-align: center; margin-top: 2rem;">
+                    <p style="color: #888; font-size: 0.9rem;">
+                        🔒 Контактная информация доступна только зарегистрированным пользователям
+                    </p>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer>
+        <p>🏆 SportCareer</p>
+    </footer>
+    
+    <script>
+        function addToFavorites(userId) {
+            fetch('/api/add_favorite/' + userId, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                }
+            })
+            .then(function(response) {
+                return response.json();
+            })
+            .then(function(data) {
+                if (data.success) {
+                    alert('✅ Добавлено в избранное!');
+                    window.location.reload();
+                } else {
+                    alert('❌ Ошибка: ' + data.message);
+                }
+            })
+            .catch(function(error) {
+                console.error('Ошибка:', error);
+                alert('❌ Произошла ошибка');
+            });
+        }
+        
+        function removeFromFavorites(userId) {
+            if (!confirm('Удалить из избранного?')) return;
+            
+            fetch('/api/remove_favorite/' + userId, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                }
+            })
+            .then(function(response) {
+                return response.json();
+            })
+            .then(function(data) {
+                if (data.success) {
+                    alert('✅ Удалено из избранного');
+                    window.location.reload();
+                } else {
+                    alert('❌ Ошибка: ' + data.message);
+                }
+            })
+            .catch(function(error) {
+                console.error('Ошибка:', error);
+                alert('❌ Произошла ошибка');
+            });
+        }
+    </script>
+</body>
+</html>

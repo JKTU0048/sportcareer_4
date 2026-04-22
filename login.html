@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Вход в аккаунт - SportCareer</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+    <header>
+        <nav>
+            <a href="/" class="logo-link">
+                <div class="logo-text">🏆 SportCareer</div>
+            </a>
+            <ul>
+                <li><a href="/">Главная</a></li>
+                <li><a href="/about">О нас</a></li>
+                <li><a href="/contact">Контакты</a></li>
+                {% if session.user_id %}
+                    <li><a href="/profile" style="color: #3498db;">Мой профиль</a></li>
+                    <li><a href="/search" style="color: #e74c3c; font-weight: bold;">🔍 Поиск</a></li>
+                    <li><a href="/favorites" style="color: #f39c12; font-weight: bold;">⭐ Избранное</a></li>
+                    <li><a href="/logout" style="color: #e74c3c;">Выйти</a></li>
+                {% else %}
+                    <li><a href="/register" style="color: #3498db;">Регистрация</a></li>
+                {% endif %}
+            </ul>
+        </nav>
+    </header>
+
+    <main>
+        {% block content %}
+        <div class="content-block">
+            <div class="login-container">
+                <div class="login-form-container">
+                    {% if session.user_id %}
+                        <div class="auth-status">
+                            <h2>✅ Вы уже вошли в систему</h2>
+                            <p>Добро пожаловать, {{ session.user_name }}!</p>
+                        </div>
+                        
+                        <div style="text-align: center; margin-top: 2rem;">
+                            <a href="/profile" class="submit-btn" style="display: inline-block; text-decoration: none;">
+                                👤 Перейти в профиль
+                            </a>
+                            <a href="/search" class="back-btn" style="margin-left: 1rem;">
+                                🔍 Найти человека
+                            </a>
+                        </div>
+                        
+                        <div style="text-align: center; margin-top: 2rem;">
+                            <a href="/logout" class="back-btn" style="background-color: #e74c3c;">
+                                🚪 Выйти из аккаунта
+                            </a>
+                        </div>
+                    {% else %}
+                        <h1 class="login-title">🔐 Вход в аккаунт</h1>
+                        
+                        <form method="POST" action="/login">
+                            <div class="form-group">
+                                <label class="form-label">Email *</label>
+                                <input type="email" class="form-input" name="email" placeholder="your@email.com" required>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label class="form-label">Пароль *</label>
+                                <input type="password" class="form-input" name="password" placeholder="Введите пароль" required>
+                                <div class="password-hint">Не менее 6 символов</div>
+                            </div>
+                            
+                            <div class="remember-forgot">
+                                <div class="remember-me">
+                                    <input type="checkbox" id="remember" name="remember">
+                                    <label for="remember">Запомнить меня</label>
+                                </div>
+                                <a href="/forgot_password" class="forgot-password">Забыли пароль?</a>
+                            </div>
+                            
+                            <button type="submit" class="submit-btn" style="width: 100%; margin-top: 1.5rem; padding: 15px;">
+                                Войти в аккаунт
+                            </button>
+                            
+                            <div class="login-links">
+                                <p>Еще нет аккаунта? <a href="/register">Зарегистрироваться</a></p>
+                                <div style="margin-top: 1.5rem;">
+                                    <a href="/choice" class="back-btn">← Назад к выбору</a>
+                                    <a href="/" class="back-btn" style="margin-left: 1rem; background-color: #95a5a6;">На главную</a>
+                                </div>
+                            </div>
+                        </form>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        {% endblock %}
+    </main>
+
+    <footer>
+        <p>🏆 SportCareer</p>
+    </footer>
+    
+    {% if not session.user_id %}
+    <script>
+        document.querySelector('form').addEventListener('submit', function(e) {
+            const email = this.querySelector('input[name="email"]').value;
+            const password = this.querySelector('input[name="password"]').value;
+            
+            if (!email || !password) {
+                e.preventDefault();
+                alert('Пожалуйста, заполните все поля');
+                return false;
+            }
+            
+            if (password.length < 6) {
+                e.preventDefault();
+                alert('Пароль должен быть не менее 6 символов');
+                return false;
+            }
+            
+            const btn = this.querySelector('.submit-btn');
+            btn.innerHTML = '⌛ Входим...';
+            btn.disabled = true;
+        });
+    </script>
+    {% endif %}
+</body>
+</html>

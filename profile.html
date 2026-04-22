@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Мой профиль - SportCareer</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+    <header>
+        <nav>
+            <a href="/" class="logo-link">
+                <div class="logo-text">🏆 SportCareer</div>
+            </a>
+            <ul>
+                <li><a href="/">Главная</a></li>
+                <li><a href="/about">О нас</a></li>
+                <li><a href="/contact">Контакты</a></li>
+                <li><a href="/search" style="color: #e74c3c; font-weight: bold;">🔍 Поиск</a></li>
+                <li><a href="/favorites" style="color: #f39c12; font-weight: bold;">⭐ Избранное</a></li>
+                <li><a href="/logout" style="color: #e74c3c;">Выйти</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main>
+        {% block content %}
+        <div class="content-block">
+            <h1 style="text-align: center; margin-bottom: 2rem;">👤 Мой профиль</h1>
+            
+            <div class="profile-info">
+                <div class="form-section">
+                    <h3>Основная информация</h3>
+                    <div class="profile-details">
+                        <div class="detail-row">
+                            <strong>Тип анкеты:</strong>
+                            <span>
+                                {% if user.profile_type == 'volunteer' %}
+                                    👤 Спортсмен, ищущий команду
+                                {% else %}
+                                    🏢 Команда/Тренер, ищущий спортсмена
+                                {% endif %}
+                            </span>
+                        </div>
+                        <div class="detail-row">
+                            <strong>Имя:</strong>
+                            <span>{{ user.name }} {{ user.surname }}</span>
+                        </div>
+                        <div class="detail-row">
+                            <strong>Email:</strong>
+                            <span>{{ user.email }}</span>
+                        </div>
+                        <div class="detail-row">
+                            <strong>Телефон:</strong>
+                            <span>{{ user.phone or 'Не указан' }}</span>
+                        </div>
+                        <div class="detail-row">
+                            <strong>Город:</strong>
+                            <span>{{ user.city }}</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="form-section">
+                    <h3>Спортивная информация</h3>
+                    <div class="profile-details">
+                        <div class="detail-row">
+                            <strong>Вид спорта:</strong>
+                            <span>
+                                {% if user.sport == 'football' %}Футбол
+                                {% elif user.sport == 'basketball' %}Баскетбол
+                                {% elif user.sport == 'volleyball' %}Волейбол
+                                {% elif user.sport == 'hockey' %}Хоккей
+                                {% elif user.sport == 'tennis' %}Теннис
+                                {% elif user.sport == 'other' %}Другой
+                                {% else %}{{ user.sport }}
+                                {% endif %}
+                            </span>
+                        </div>
+                        <div class="detail-row">
+                            <strong>Позиция:</strong>
+                            <span>{{ user.position or 'Не указана' }}</span>
+                        </div>
+                        <div class="detail-row">
+                            <strong>Опыт:</strong>
+                            <span>{{ user.experience or '0' }} лет</span>
+                        </div>
+                        <div class="detail-row">
+                            <strong>Уровень:</strong>
+                            <span>
+                                {% if user.level == 'beginner' %}Начинающий
+                                {% elif user.level == 'amateur' %}Любитель
+                                {% elif user.level == 'professional' %}Профессионал
+                                {% else %}{{ user.level or 'Не указан' }}
+                                {% endif %}
+                            </span>
+                        </div>
+                        <div class="detail-row">
+                            <strong>Цель:</strong>
+                            <span>
+                                {% if user.goals == 'team' %}Хочу найти человека в команду
+                                {% elif user.goals == 'partner' %}Ищу напарника для тренировок
+                                {% elif user.goals == 'coach' %}Ищу тренера
+                                {% elif user.goals == 'participant' %}Хочу участника на мероприятия
+                                {% else %}{{ user.goals }}
+                                {% endif %}
+                            </span>
+                        </div>
+                        <div class="detail-row">
+                            <strong>Дата регистрации:</strong>
+                            <span>{{ user.created_at.strftime('%d.%m.%Y') }}</span>
+                        </div>
+                    </div>
+                </div>
+                
+                {% if user.about %}
+                <div class="form-section">
+                    <h3>📝 О себе</h3>
+                    <div class="profile-details">
+                        <div class="detail-row" style="flex-direction: column; align-items: flex-start;">
+                            <strong style="margin-bottom: 0.5rem;">Рассказ о себе:</strong>
+                            <span style="white-space: pre-wrap; text-align: left; color: #666; line-height: 1.6;">
+                                {{ user.about }}
+                            </span>
+                        </div>
+                    </div>
+                </div>
+                {% endif %}
+                
+                <div style="text-align: center; margin-top: 2rem;">
+                    <a href="/search" class="submit-btn" style="display: inline-block;">🔍 Найти человека</a>
+                    <a href="/volunteer" class="back-btn" style="margin-left: 1rem; display: inline-block;">📝 Создать анкету</a>
+                    <a href="/create_profile" class="back-btn" style="margin-left: 1rem; background-color: #2ecc71; display: inline-block;">✏️ Редактировать профиль</a>
+                </div>
+            </div>
+        </div>
+        {% endblock %}
+    </main>
+
+    <footer>
+        <p>🏆 SportCareer</p>
+    </footer>
+</body>
+</html>

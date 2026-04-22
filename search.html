@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Поиск спортсменов - SportCareer</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body class="page-sport">
+    <header>
+        <nav>
+            <a href="/" class="logo-link">
+                <div class="logo-text">🏆 SportCareer</div>
+            </a>
+            <ul>
+                <li><a href="/">Главная</a></li>
+                <li><a href="/about">О нас</a></li>
+                <li><a href="/contact">Контакты</a></li>
+                {% if session.user_id %}
+                    <li><a href="/profile" style="color: #3498db;">Мой профиль</a></li>
+                    <li><a href="/search" style="color: #e74c3c; font-weight: bold;">🔍 Поиск</a></li>
+                    <li><a href="/favorites" style="color: #f39c12; font-weight: bold;">⭐ Избранное</a></li>
+                    <li><a href="/messages" style="color: #2ecc71; font-weight: bold;">✉️ Сообщения</a></li>
+                    <li><a href="/logout" style="color: #e74c3c;">Выйти</a></li>
+                {% else %}
+                    <li><a href="/login" style="color: #2ecc71;">Войти</a></li>
+                {% endif %}
+            </ul>
+        </nav>
+    </header>
+
+    <main>
+        <div class="content-block">
+            {% if search_title %}
+                <h1 style="margin-bottom: 0.5rem;">🔍 {{ search_title }}</h1>
+            {% else %}
+                <h1 style="margin-bottom: 0.5rem;">🔍 Поиск спортсменов</h1>
+            {% endif %}
+            
+            <p style="color: #666; margin-bottom: 1.5rem;">
+                {% if current_user.profile_type == 'seeker' %}
+                    
+                {% else %}
+                    
+                {% endif %}
+            </p>
+            
+            <div class="search-container">
+                <!-- Боковая панель с фильтрами -->
+                <div class="filters-sidebar">
+                    <h3 style="margin-bottom: 1.5rem;">Фильтры поиска</h3>
+                    
+                    <form method="GET" action="/search" id="search-form">
+                        <div class="form-group">
+                            <label class="form-label">Вид спорта</label>
+                            <select class="form-input" name="sport">
+                                <option value="">Все виды</option>
+                                {% for sport_item in sports %}
+                                    <option value="{{ sport_item }}" {% if search_params.sport == sport_item %}selected{% endif %}>
+                                        {% if sport_item == 'football' %}Футбол
+                                        {% elif sport_item == 'basketball' %}Баскетбол
+                                        {% elif sport_item == 'volleyball' %}Волейбол
+                                        {% elif sport_item == 'hockey' %}Хоккей
+                                        {% elif sport_item == 'tennis' %}Теннис
+                                        {% elif sport_item == 'other' %}Другой
+                                        {% else %}{{ sport_item }}
+                                        {% endif %}
+                                    </option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label">Город</label>
+                            <select class="form-input" name="city">
+                                <option value="">Все города</option>
+                                {% for city_item in cities %}
+                                    <option value="{{ city_item }}" {% if search_params.city == city_item %}selected{% endif %}>
+                                        {{ city_item }}
+                                    </option>
+                                {% endfor %}
+                            </select>
+                            <div style="margin-top: 5px;">
+                                <input type="text" class="form-input" name="city_custom" placeholder="или введите город" 
+                                       style="margin-top: 5px;" value="{% if search_params.city and search_params.city not in cities %}{{ search_params.city }}{% endif %}">
+                            </div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label">Уровень подготовки</label>
+                            <select class="form-input" name="level">
+                                <option value="">Любой уровень</option>
+                                <option value="beginner" {% if search_params.level == 'beginner' %}selected{% endif %}>Начинающий</option>
+                                <option value="amateur" {% if search_params.level == 'amateur' %}selected{% endif %}>Любитель</option>
+                                <option value="professional" {% if search_params.level == 'professional' %}selected{% endif %}>Профессионал</option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label">Цель спортсмена</label>
+                            <select class="form-input" name="goals">
+                                <option value="">Любая цель</option>
+                                {% if current_user.profile_type == 'seeker' %}
+                                    <option value="team" {% if search_params.goals == 'team' %}selected{% endif %}>Ищет команду</option>
+                                    <option value="partner" {% if search_params.goals == 'partner' %}selected{% endif %}>Ищет напарника</option>
+                                    <option value="coach" {% if search_params.goals == 'coach' %}selected{% endif %}>Ищет тренера</option>
+                                    <option value="participant" {% if search_params.goals == 'participant' %}selected{% endif %}>Ищет участника</option>
+                                {% else %}
+                                    <option value="team" {% if search_params.goals == 'team' %}selected{% endif %}>Хочу найти человека</option>
+                                    <option value="partner" {% if search_params.goals == 'partner' %}selected{% endif %}>Ищу напарника</option>
+                                    <option value="coach" {% if search_params.goals == 'coach' %}selected{% endif %}>Ищу тренера</option>
+                                    <option value="participant" {% if search_params.goals == 'participant' %}selected{% endif %}>Нужен участник</option>
+                                {% endif %}
+                            </select>
+                        </div>
+                        
+                        <div style="display: flex; gap: 2px; margin:15px; justify-content: flex-end; width: 100%;">
+                            <button type="submit" class="submit-btn" style="flex: 1;">
+                                🔍 Найти
+                            </button>
+                            <a href="/search" class="back-btn" style="background-color: #95a5a6; text-decoration: none; padding: 14px 30px; display: inline-block; border-radius: 10px; color: white; text-align: center;">
+                                ⛔ Сбросить
+                            </a>
+                        </div>
+                    </form>
+                </div>
+                
+                <!-- Результаты поиска -->
+                <div class="results-section">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+                        <div>
+                            <span class="results-count">Найдено: {{ users|length }}</span>
+                        </div>
+                        <div>
+                            <a href="/favorites" class="back-btn" style="background-color: #f39c12; margin-right: 1rem;">
+                                ⭐ Избранное
+                            </a>
+                            <a href="/find_person" class="back-btn" style="background-color: #95a5a6;">
+                                ← Назад
+                            </a>
+                        </div>
+                    </div>
+                    
+                    {% if users %}
+                        {% for user in users %}
+                        <div class="user-card">
+                            <div class="user-header">
+                                <div class="user-name">
+                                    {{ user.name }} {{ user.surname }}
+                                    {% if user.level %}
+                                        <span class="level-badge level-{{ user.level }}">
+                                            {% if user.level == 'beginner' %}Начинающий
+                                            {% elif user.level == 'amateur' %}Любитель
+                                            {% elif user.level == 'professional' %}Профессионал
+                                            {% endif %}
+                                        </span>
+                                    {% endif %}
+                                </div>
+                                <div class="user-sport">
+                                    {% if user.sport == 'football' %}⚽ Футбол
+                                    {% elif user.sport == 'basketball' %}🏀 Баскетбол
+                                    {% elif user.sport == 'volleyball' %}🏐 Волейбол
+                                    {% elif user.sport == 'hockey' %}🏒 Хоккей
+                                    {% elif user.sport == 'tennis' %}🎾 Теннис
+                                    {% elif user.sport == 'other' %}🤸 Другой
+                                    {% else %}{{ user.sport }}
+                                    {% endif %}
+                                </div>
+                            </div>
+                            
+                            <div class="user-details">
+                                <div class="detail-item">
+                                    <i>📍</i>
+                                    <span>{{ user.city }}</span>
+                                </div>
+                                
+                                <div class="detail-item">
+                                    <i>🎯</i>
+                                    <span>
+                                        {% if user.goals == 'team' %}Ищет команду
+                                        {% elif user.goals == 'partner' %}Ищет напарника
+                                        {% elif user.goals == 'coach' %}Ищет тренера
+                                        {% elif user.goals == 'participant' %}Ищет участника
+                                        {% else %}{{ user.goals }}
+                                        {% endif %}
+                                    </span>
+                                </div>
+                                
+                                {% if user.position %}
+                                <div class="detail-item">
+                                    <i>🏅</i>
+                                    <span>{{ user.position }}</span>
+                                </div>
+                                {% endif %}
+                                
+                                {% if user.experience %}
+                                <div class="detail-item">
+                                    <i>📅</i>
+                                    <span>Опыт: {{ user.experience }} лет</span>
+                                </div>
+                                {% endif %}
+                                
+                                {% if user.phone %}
+                                <div class="detail-item">
+                                    <i>📱</i>
+                                    <span>{{ user.phone }}</span>
+                                </div>
+                                {% endif %}
+                                
+                                <div class="detail-item">
+                                    <i>📧</i>
+                                    <span>{{ user.email }}</span>
+                                </div>
+                            </div>
+                            
+                            {% if user.created_at %}
+                            <div style="color: #888; font-size: 0.9rem; margin-top: 0.5rem;">
+                                <i>📅</i> Зарегистрирован: {{ user.created_at.strftime('%d.%m.%Y') }}
+                            </div>
+                            {% endif %}
+                            
+                            <div class="user-actions">
+                                <!-- ИСПРАВЛЕНО: прямая ссылка на чат -->
+                                <a href="/messages/{{ user.id }}" class="submit-btn" style="padding: 10px 20px; text-decoration: none; display: inline-block;">
+                                    ✉️ Написать
+                                </a>
+                                
+                                {% if user.id in favorite_ids %}
+                                    <button class="back-btn" onclick="removeFromFavorites('{{ user.id }}')" 
+                                            style="background-color: #f39c12; padding: 10px 20px; color: white;">
+                                        ⭐ В избранном
+                                    </button>
+                                {% else %}
+                                    <button class="back-btn" onclick="addToFavorites('{{ user.id }}')" 
+                                            style="background-color: #f1c40f; padding: 10px 20px; color: #333; font-weight: bold;">
+                                        ☆ Добавить в избранное
+                                    </button>
+                                {% endif %}
+                                
+                                <a href="/profile/{{ user.id }}" class="back-btn" style="background-color: #3498db; padding: 10px 20px; text-decoration: none;">
+                                    👁️ Профиль
+                                </a>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    {% else %}
+                        <div class="empty-results">
+                            <div>🔍</div>
+                            <h3>Ничего не найдено</h3>
+                            <p>Попробуйте изменить параметры поиска или сбросить фильтры</p>
+                            <a href="/search" class="submit-btn" style="margin-top: 1rem; display: inline-block;">
+                                Сбросить фильтры
+                            </a>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer>
+        <p>🏆 SportCareer</p>
+    </footer>
+    
+    <script>
+        // Обработка формы поиска
+        document.getElementById('search-form').addEventListener('submit', function(e) {
+            var citySelect = this.querySelector('select[name="city"]');
+            var cityCustom = this.querySelector('input[name="city_custom"]');
+            
+            if (cityCustom.value.trim()) {
+                citySelect.value = cityCustom.value.trim();
+            }
+        });
+        
+        // ФУНКЦИИ ДЛЯ ИЗБРАННОГО
+        function addToFavorites(userId) {
+            console.log("🔄 Пытаюсь добавить пользователя ID=" + userId + " в избранное");
+            
+            fetch('/api/add_favorite/' + userId, {
+                method: 'POST',
+                credentials: 'same-origin'
+            })
+            .then(function(response) {
+                return response.json();
+            })
+            .then(function(data) {
+                if (data.success) {
+                    alert('✅ Добавлено в избранное!');
+                    location.reload();
+                } else {
+                    alert('❌ ' + data.message);
+                }
+            })
+            .catch(function(error) {
+                console.error('💥 Ошибка:', error);
+                alert('❌ Не удалось добавить в избранное');
+            });
+        }
+        
+        function removeFromFavorites(userId) {
+            if (!confirm('Удалить из избранного?')) {
+                return;
+            }
+            
+            fetch('/api/remove_favorite/' + userId, {
+                method: 'POST',
+                credentials: 'same-origin'
+            })
+            .then(function(response) {
+                return response.json();
+            })
+            .then(function(data) {
+                if (data.success) {
+                    alert('✅ Удалено из избранного');
+                    location.reload();
+                } else {
+                    alert('❌ ' + data.message);
+                }
+            })
+            .catch(function(error) {
+                console.error('💥 Ошибка:', error);
+                alert('❌ Не удалось удалить из избранного');
+            });
+        }
+        
+        document.querySelector('select[name="city"]').addEventListener('change', function() {
+            var cityCustom = document.querySelector('input[name="city_custom"]');
+            if (this.value && !cityCustom.value) {
+                cityCustom.value = this.value;
+            }
+        });
+    </script>
+</body>
+</html>

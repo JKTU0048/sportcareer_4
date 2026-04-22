@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Выбор пути - SportCareer</title>
+    <link rel="stylesheet" href="/static/style.css">
+    <style>
+        /* Дополнительные стили для одинаковых кнопок */
+        .choice-block h2 {
+            font-size: 2.2rem !important;
+            margin-bottom: 1.2rem !important;
+            font-weight: bold !important;
+            text-align: center !important;
+            color: white !important;
+            line-height: 1.3 !important;
+        }
+        
+        .choice-block p {
+            font-size: 1.15rem !important;
+            line-height: 1.6 !important;
+            text-align: center !important;
+            max-width: 280px !important;
+            margin: 0 auto !important;
+            color: white !important;
+            font-weight: normal !important;
+            opacity: 0.95 !important;
+        }
+        
+        .choice-block .block-icon {
+            font-size: 5rem !important;
+            margin-bottom: 2rem !important;
+            display: block !important;
+        }
+        
+        /* Убираем возможные различия */
+        .choice-block {
+            text-decoration: none !important;
+            font-family: Arial, sans-serif !important;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <nav>
+            <a href="/" class="logo-link">
+                <div class="logo-text">🏆 SportCareer</div>
+            </a>
+            <ul>
+                <li><a href="/">Главная</a></li>
+                <li><a href="/about">О нас</a></li>
+                <li><a href="/contact">Контакты</a></li>
+            </ul>
+        </nav>
+    </header>
+ 
+    <main>
+        <section class="choice-section">
+            <h1 style="font-size: 2.8rem; margin-bottom: 1.5rem; text-align: center; color: #000;">Выберите ваш путь:</h1>
+            <p class="choice-description" style="font-size: 1.3rem; text-align: center; color: #000; margin-bottom: 3rem;">
+                Независимо от вашего выбора, мы поможем вам достичь спортивных целей
+            </p>
+            
+            <div class="choice-container">
+                <div class="choice-block volunteer-block" onclick="window.location.href='/volunteer'" style="cursor: pointer;">
+                    <div class="block-content">
+                        <div class="block-icon">🤝</div>
+                        <h2>Создать анкету</h2>
+                        <p>Размести свою анкету для того, чтобы человек/команда тебя нашла</p>
+                    </div>
+                </div>
+                
+                <div class="choice-block sport-block" onclick="window.location.href='/sport'" style="cursor: pointer;">
+                    <div class="block-content">
+                        <div class="block-icon">⚽</div>
+                        <h2>Найти человека</h2>
+                        <p>Развивайте спортивный талант, находите в команду спортсменов или тренера</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div style="margin-top: 3rem; text-align: center;">
+                <a href="/" class="back-btn" style="background-color: #95a5a6; padding: 16px 35px; font-size: 1.2rem; text-decoration: none; color: white; border-radius: 8px;">
+                    ← На главную
+                </a>
+            </div>
+        </section>
+    </main>
+ 
+    <footer>
+        <p>🏆 SportCareer</p>
+    </footer>
+    
+    <script>
+        document.querySelectorAll('.choice-block').forEach(block => {
+            block.addEventListener('mouseenter', function() {
+                this.style.transform = 'translateY(-10px)';
+                this.style.transition = 'transform 0.3s ease';
+            });
+            
+            block.addEventListener('mouseleave', function() {
+                this.style.transform = 'translateY(0)';
+            });
+        });
+    </script>
+</body>
+</html>

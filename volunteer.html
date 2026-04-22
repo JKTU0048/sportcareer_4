@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% if session.user_id and session.profile_type == 'volunteer' %}Искать команды{% else %}Создать анкету{% endif %} - SportCareer</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body class="page-volunteer">
+    <header>
+        <nav>
+            <a href="/" class="logo-link">
+                <div class="logo-text">🏆 SportCareer</div>
+            </a>
+            <ul>
+                <li><a href="/">Главная</a></li>
+                <li><a href="/about">О нас</a></li>
+                <li><a href="/contact">Контакты</a></li>
+                {% if session.user_id %}
+                    <li><a href="/profile" style="color: #3498db;">Мой профиль</a></li>
+                    <li><a href="/search" style="color: #e74c3c; font-weight: bold;">🔍 Поиск</a></li>
+                    <li><a href="/favorites" style="color: #f39c12; font-weight: bold;">⭐ Избранное</a></li>
+                    <li><a href="/logout" style="color: #e74c3c;">Выйти</a></li>
+                {% else %}
+                    <li><a href="/login" style="color: #2ecc71;">Войти</a></li>
+                {% endif %}
+            </ul>
+        </nav>
+    </header>
+
+    <main>
+        {% block content %}
+        <section class="content-section">
+            <div class="content-block">
+                <h1 style="font-size: 2.5rem; margin-bottom: 1rem;">
+                    {% if session.user_id and session.profile_type == 'volunteer' %}
+                        🔍 Искать команды
+                    {% else %}
+                        📝 Создать свою анкету
+                    {% endif %}
+                </h1>
+                
+                <p class="page-description" style="font-size: 1.3rem;">
+                    {% if session.user_id %}
+                        {% if session.profile_type == 'volunteer' %}
+                            👤 Ваша анкета уже создана! Теперь вы можете искать команды, которые ищут спортсменов.
+                        {% else %}
+                            📝 Разместите свою анкету, чтобы команды и тренеры могли вас найти.
+                        {% endif %}
+                        Вы вошли как <strong>{{ session.user_name }}</strong>.
+                    {% else %}
+                        Разместите свою анкету, чтобы команды и тренеры смогли вас найти.
+                        У вас уже есть аккаунт? Войдите, чтобы управлять своей анкетой. 
+                        Для создания анкеты необходимо зарегистрироваться или войти в систему.
+                    {% endif %}
+                </p>
+                
+                {% if session.user_id %}
+                    {% if session.profile_type == 'volunteer' %}
+                        <div class="auth-status" style="margin-bottom: 2rem; text-align: center;">
+                            <p>✅ <strong>Ваша анкета уже создана!</strong></p>
+                            <p>👤 Теперь вас могут находить команды и тренеры</p>
+                            <p>🔍 Теперь вы можете искать команды, которые ищут спортсменов</p>
+                        </div>
+                        
+                        <!-- Большая кнопка расширенного поиска -->
+                        <div style="text-align: center; margin: 2rem auto;">
+                            <a href="/search" class="submit-btn" style="display: inline-block; padding: 20px 50px; font-size: 1.4rem; text-decoration: none;">
+                                <span style="font-size: 1.6rem; margin-right: 10px;">🔍</span>
+                                Расширенный поиск команд
+                            </a>
+                        </div>
+                        
+                        <!-- ВОЗВРАЩАЕМ быстрый поиск по видам спорта -->
+                        <div class="quick-search" style="margin-top: 2rem; padding: 1.5rem; background: rgba(52, 152, 219, 0.05); border-radius: 10px; border-left: 4px solid #3498db; max-width: 800px; margin-left: auto; margin-right: auto;">
+                            <h4 style="margin-bottom: 1rem;">Быстрый поиск по виду спорта:</h4>
+                            <p style="color: #666; margin-bottom: 1.5rem;">
+                                Нажмите на интересующий вид спорта, чтобы увидеть команды
+                            </p>
+                            
+                            <div class="sport-buttons" style="display: flex; flex-wrap: wrap; gap: 10px; justify-content: center;">
+                                <a href="/search?sport=football" class="sport-btn sport-football" style="display: inline-flex; align-items: center; gap: 8px; padding: 12px 20px; border-radius: 25px; text-decoration: none; font-weight: bold; color: white; background: #27ae60;">
+                                    <span>⚽</span> Футбол
+                                </a>
+                                <a href="/search?sport=basketball" class="sport-btn sport-basketball" style="display: inline-flex; align-items: center; gap: 8px; padding: 12px 20px; border-radius: 25px; text-decoration: none; font-weight: bold; color: white; background: #e74c3c;">
+                                    <span>🏀</span> Баскетбол
+                                </a>
+                                <a href="/search?sport=volleyball" class="sport-btn sport-volleyball" style="display: inline-flex; align-items: center; gap: 8px; padding: 12px 20px; border-radius: 25px; text-decoration: none; font-weight: bold; color: white; background: #3498db;">
+                                    <span>🏐</span> Волейбол
+                                </a>
+                                <a href="/search?sport=hockey" class="sport-btn sport-hockey" style="display: inline-flex; align-items: center; gap: 8px; padding: 12px 20px; border-radius: 25px; text-decoration: none; font-weight: bold; color: white; background: #2c3e50;">
+                                    <span>🏒</span> Хоккей
+                                </a>
+                                <a href="/search?sport=tennis" class="sport-btn sport-tennis" style="display: inline-flex; align-items: center; gap: 8px; padding: 12px 20px; border-radius: 25px; text-decoration: none; font-weight: bold; color: white; background: #9b59b6;">
+                                    <span>🎾</span> Теннис
+                                </a>
+                                <a href="/search?sport=other" class="sport-btn sport-other" style="display: inline-flex; align-items: center; gap: 8px; padding: 12px 20px; border-radius: 25px; text-decoration: none; font-weight: bold; color: white; background: #f39c12;">
+                                    <span>🤸</span> Другой
+                                </a>
+                            </div>
+                        </div>
+                        
+                        <div style="margin-top: 2rem; text-align: center;">
+                            <a href="/profile" class="back-btn" style="background-color: #3498db; margin-right: 1rem; padding: 14px 30px; display: inline-block; color: white; text-decoration: none; border-radius: 8px;">
+                                ✏️ Редактировать профиль
+                            </a>
+                            <a href="/find_person" class="back-btn" style="padding: 14px 30px; display: inline-block; background: #3498db; color: white; text-decoration: none; border-radius: 8px;">
+                                ← Назад к поиску человека
+                            </a>
+                        </div>
+                        
+                    {% else %}
+                        <div class="auth-status" style="margin-bottom: 2rem; text-align: center;">
+                            <p>📝 <strong>Создание анкеты для спортсмена</strong></p>
+                            <p>👤 После создания анкеты вас будут видеть команды и тренеры</p>
+                        </div>
+                        
+                        <div style="text-align: center; margin: 2rem 0;">
+                            <a href="/create_profile" class="submit-btn" style="padding: 18px 40px; font-size: 1.3rem; display: inline-block; background: linear-gradient(135deg, #3498db, #2980b9); color: white; text-decoration: none; border-radius: 8px;">
+                                📤 Создать свою анкету
+                            </a>
+                        </div>
+                        
+                        <div style="text-align: center; margin-top: 1rem;">
+                            <a href="/find_person" class="back-btn" style="margin-right: 1rem; padding: 14px 30px; display: inline-block; background: #3498db; color: white; text-decoration: none; border-radius: 8px;">
+                                ← Найти человека
+                            </a>
+                            <a href="/profile" class="back-btn" style="background-color: #3498db; padding: 14px 30px; display: inline-block; color: white; text-decoration: none; border-radius: 8px;">
+                                👤 Мой профиль
+                            </a>
+                        </div>
+                    {% endif %}
+                    
+                {% else %}
+                    <div style="max-width: 500px; margin: 2rem auto;">
+                        <a href="/register/volunteer" class="auth-btn create-btn" style="display: block; padding: 22px 40px; font-size: 1.4rem; text-align: center; margin-bottom: 20px; background: linear-gradient(135deg, #3498db, #2980b9); color: white; text-decoration: none; border-radius: 12px;">
+                            <span style="font-size: 1.8rem; margin-right: 10px;">📝</span>
+                            Зарегистрироваться
+                        </a>
+                        
+                        <div style="text-align: center; margin: 25px 0; font-size: 1.2rem">
+                            Уже есть аккаунт?
+                        </div>
+                        
+                        <a href="/login" class="auth-btn create-btn" style="display: block; padding: 22px 40px; font-size: 1.4rem; text-align: center; background: linear-gradient(135deg, #3498db, #2980b9); color: white; text-decoration: none; border-radius: 12px;">
+                            <span style="font-size: 1.8rem; margin-right: 10px;">🔑</span>
+                            Войти в аккаунт
+                        </a>
+                    </div>
+                {% endif %}
+                
+                <div class="advantages-block" style="margin-top: 3rem;">
+                    <h3 style="font-size: 1.5rem;">
+                        {% if session.user_id and session.profile_type == 'volunteer' %}
+                            🔍 Что вы можете делать в поиске команд:
+                        {% else %}
+                            📝 Преимущества создания анкеты:
+                        {% endif %}
+                    </h3>
+                    <ul>
+                        {% if session.user_id and session.profile_type == 'volunteer' %}
+                            <li style="font-size: 1.1rem;">🔎 Искать команды по виду спорта и городу</li>
+                            <li style="font-size: 1.1rem;">👥 Просматривать профили команд и тренеров</li>
+                            <li style="font-size: 1.1rem;">💌 Отправлять заявки на вступление в команды</li>
+                            <li style="font-size: 1.1rem;">⭐ Добавлять понравившиеся команды в избранное</li>
+                            <li style="font-size: 1.1rem;">🏆 Находить команды для участия в соревнованиях</li>
+                            <li style="font-size: 1.1rem;">🤝 Находить тренеров для профессионального роста</li>
+                        {% else %}
+                            <li style="font-size: 1.1rem;">🔎 Вашу анкету увидят десятки команд и тренеров</li>
+                            <li style="font-size: 1.1rem;">👥 Получайте предложения о вступлении в команды</li>
+                            <li style="font-size: 1.1rem;">💌 Связывайтесь напрямую с заинтересованными сторонами</li>
+                            <li style="font-size: 1.1rem;">⭐ Повышайте свои шансы на успешную спортивную карьеру</li>
+                            <li style="font-size: 1.1rem;">🏆 Участвуйте в отборах и соревнованиях</li>
+                            <li style="font-size: 1.1rem;">🤝 Находите партнеров для тренировок</li>
+                        {% endif %}
+                    </ul>
+                </div>
+                
+                <div class="navigation-buttons" style="margin-top: 2rem; text-align: center;">
+                    <a href="/choice" class="back-btn" style="margin-right: 1rem; padding: 14px 30px; display: inline-block; background: #3498db; color: white; text-decoration: none; border-radius: 8px;">← Вернуться к выбору</a>
+                    <a href="/" class="back-btn home-btn" style="background-color: #95a5a6; padding: 14px 30px; display: inline-block; color: white; text-decoration: none; border-radius: 8px;">На главную</a>
+                </div>
+            </div>
+        </section>
+        {% endblock %}
+    </main>
+
+    <footer>
+        <p>🏆 SportCareer</p>
+    </footer>
+    
+    <script>
+        function showQuickSearch() {
+            alert('🔍 Используйте кнопки быстрого поиска выше или перейдите в расширенный поиск');
+        }
+    </script>
+</body>
+</html>

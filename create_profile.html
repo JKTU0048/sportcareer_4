@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Создание анкеты - SportCareer</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body class="page-volunteer">
+    <header>
+        <nav>
+            <a href="/" class="logo-link">
+                <div class="logo-text">🏆 SportCareer</div>
+            </a>
+            <ul>
+                <li><a href="/">Главная</a></li>
+                <li><a href="/about">О нас</a></li>
+                <li><a href="/contact">Контакты</a></li>
+                {% if session.user_id %}
+                    <li><a href="/profile" style="color: #3498db;">Мой профиль</a></li>
+                    <li><a href="/search" style="color: #e74c3c; font-weight: bold;">🔍 Поиск</a></li>
+                    <li><a href="/favorites" style="color: #f39c12; font-weight: bold;">⭐ Избранное</a></li>
+                    <li><a href="/logout" style="color: #e74c3c;">Выйти</a></li>
+                {% else %}
+                    <li><a href="/login" style="color: #2ecc71;">Войти</a></li>
+                {% endif %}
+            </ul>
+        </nav>
+    </header>
+
+    <main>
+        {% block content %}
+        <div class="content-block">
+            <h1 style="text-align: center; margin-bottom: 1rem;">
+                📋 Заполнение спортивной анкеты
+            </h1>
+            
+            <div class="auth-status" style="margin-bottom: 2rem; text-align: center;">
+                <p>📝 <strong>Создание анкеты для спортсмена</strong></p>
+                <p>👤 Ваша анкета будет видна <strong>командам и тренерам, которые ищут спортсменов</strong></p>
+                <p>🎯 Вы будете искать <strong>команды и возможности для участия</strong></p>
+            </div>
+            
+            <form method="POST" action="/create_profile" class="profile-form">
+                <div class="form-section">
+                    <h3>⚽ Спортивная информация</h3>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Вид спорта *</label>
+                        <select class="form-input" name="sport" required>
+                            <option value="">Выберите вид спорта</option>
+                            <option value="football">Футбол</option>
+                            <option value="basketball">Баскетбол</option>
+                            <option value="volleyball">Волейбол</option>
+                            <option value="hockey">Хоккей</option>
+                            <option value="tennis">Теннис</option>
+                            <option value="other">Другой</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label">Позиция / Роль</label>
+                            <input type="text" class="form-input" name="position" placeholder="Нападающий, защитник и т.д.">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label">Уровень подготовки</label>
+                            <select class="form-input" name="level">
+                                <option value="beginner">Начинающий</option>
+                                <option value="amateur">Любитель</option>
+                                <option value="professional">Профессионал</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Опыт (лет)</label>
+                        <input type="number" class="form-input" name="experience" placeholder="0" min="0" max="50">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Достижения / О себе</label>
+                        <textarea class="form-textarea" name="about" rows="4" placeholder="Расскажите о своих спортивных достижениях, опыте, целях..."></textarea>
+                    </div>
+                </div>
+                
+                <div class="form-section">
+                    <h3>🎯 Цели и предпочтения</h3>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Что вы ищете? *</label>
+                        <select class="form-input" name="goals" required>
+                            <option value="">Выберите вариант</option>
+                            <option value="team">Хочу найти команду</option>
+                            <option value="partner">Ищу напарника для тренировок</option>
+                            <option value="coach">Ищу тренера</option>
+                            <option value="participant">Хочу участвовать в мероприятиях</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Город *</label>
+                        <input type="text" class="form-input" name="city" placeholder="В каком городе вы находитесь?" required>
+                    </div>
+                </div>
+                
+                <div style="text-align: center; margin-top: 2rem;">
+                    <button type="submit" class="submit-btn" style="padding: 15px 40px; font-size: 1.2rem;">
+                        📤 Сохранить анкету
+                    </button>
+                    
+                    <div style="margin-top: 1.5rem;">
+                        <p style="color: #666; margin-bottom: 1rem;">
+                            После сохранения анкеты вас смогут находить команды и тренеры
+                        </p>
+                        
+                        <a href="/volunteer" class="back-btn">← Назад к созданию анкеты</a>
+                        <a href="/profile" class="back-btn" style="margin-left: 1rem; background-color: #3498db;">Просмотреть профиль</a>
+                        <a href="/" class="back-btn" style="margin-left: 1rem; background-color: #95a5a6;">На главную</a>
+                    </div>
+                </div>
+            </form>
+        </div>
+        {% endblock %}
+    </main>
+
+    <footer>
+        <p>🏆 SportCareer</p>
+    </footer>
+</body>
+</html>

@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SportCareer - Главная</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+    <header>
+        <nav>
+            <a href="/" class="logo-link">
+                <div class="logo-text">🏆 SportCareer</div>
+            </a>
+            <ul>
+                <li><a href="/about">О нас</a></li>
+                <li><a href="/contact">Контакты</a></li>
+                {% if session.user_id %}
+                    <li><a href="/profile" style="color: #3498db;">Мой профиль</a></li>
+                    <li><a href="/logout" style="color: #e74c3c;">Выйти</a></li>
+                {% else %}
+                    <li><a href="/login">Войти</a></li>
+                {% endif %}
+            </ul>
+        </nav>
+    </header>
+
+    <main>
+        <section class="hero">
+            <h2>SportCareer</h2>
+            {% if session.user_id %}
+                <div class="welcome-message">
+                    <p style="font-size: 1.3rem; margin-bottom: 1rem;">Добро пожаловать, <strong>{{ session.user_name }}</strong>!</p>
+                    <p style="font-size: 1.2rem; margin-bottom: 2rem;">Мы сводим спортсменов и команды для общих побед.</p>
+                </div>
+                
+                <div class="user-actions">
+                    <a href="/find_person">
+                        <button style="background-color: #e74c3c; padding: 16px 35px; font-size: 1.2rem;">
+                            {% if session.profile_type == 'seeker' %}
+                                🔍 Найти спортсмена
+                            {% else %}
+                                🔍 Найти команду
+                            {% endif %}
+                        </button>
+                    </a>
+                    
+                    <!-- Изменяем кнопку "Создать анкету" в зависимости от типа профиля -->
+                    {% if session.profile_type == 'volunteer' %}
+                        <!-- Если уже создал анкету - ведем в поиск -->
+                        <a href="/search">
+                            <button style="background-color: #3498db; margin-left: 1.5rem; padding: 16px 35px; font-size: 1.2rem;">
+                                👥 Анкеты
+                            </button>
+                        </a>
+                    {% else %}
+                        <!-- Если еще не создал анкету - создаем -->
+                        <a href="/create_profile">
+                            <button style="background-color: #3498db; margin-left: 1.5rem; padding: 16px 35px; font-size: 1.2rem;">
+                                📝 Создать анкету
+                            </button>
+                        </a>
+                    {% endif %}
+                </div>
+            {% else %}
+                <p style="font-size: 1.3rem; line-height: 1.6; margin-bottom: 2rem;">
+                    Мы сводим спортсменов и команды для общих побед. 
+                    Если ты ищешь новый клуб или твоей команде нужны талантливые игроки — ты в нужном месте. 
+                    Более того, мы также помогаем волонтерам найти работу!
+                    Простая платформа для идеального совпадения целей и амбиций. <br> <br>
+                    Переходи по кнопке ниже чтобы выбрать свою цель на этом сайте:
+                </p>
+                <a href="/choice">
+                    <button style="padding: 16px 40px; font-size: 1.3rem;">🚀 Вперед!</button>
+                </a>
+            {% endif %}
+        </section>
+    </main>
+
+    <footer>
+        <p>🏆 SportCareer</p>
+    </footer>
+</body>
+</html>

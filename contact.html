@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Контакты - SportCareer</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+    <header>
+        <nav>
+            <a href="/" class="logo-link">
+                <div class="logo-text">🏆 SportCareer</div>
+            </a>
+            <ul>
+                <li><a href="/">Главная</a></li>
+                <li><a href="/about">О нас</a></li>
+                <li><a href="/contact">Контакты</a></li>
+                {% if session.user_id %}
+                    <li><a href="/profile" style="color: #3498db;">Мой профиль</a></li>
+                    <li><a href="/search" style="color: #e74c3c; font-weight: bold;">🔍 Поиск</a></li>
+                    <li><a href="/favorites" style="color: #f39c12; font-weight: bold;">⭐ Избранное</a></li>
+                    <li><a href="/logout" style="color: #e74c3c;">Выйти</a></li>
+                {% else %}
+                    <li><a href="/login" style="color: #2ecc71;">Войти</a></li>
+                    <li><a href="/register" style="color: #3498db;">Регистрация</a></li>
+                {% endif %}
+            </ul>
+        </nav>
+    </header>
+
+    <main>
+        {% block content %}
+        <section class="contact-section content-block">
+            <h1>Свяжитесь с нами</h1>
+            <p class="contact-description">Есть вопросы или предложения? Мы всегда рады помочь!</p>
+            
+            <div class="contact-container">
+                <div class="contact-form-container">
+                    <form method="POST" class="contact-form">
+                        {{ form.hidden_tag() }}
+                        
+                        <div class="form-group">
+                            {{ form.name.label(class="form-label") }}
+                            {{ form.name(class="form-input", placeholder="Ваше имя") }}
+                            {% if form.name.errors %}
+                                <div class="error-message">{{ form.name.errors[0] }}</div>
+                            {% endif %}
+                        </div>
+                        
+                        <div class="form-group">
+                            {{ form.email.label(class="form-label") }}
+                            {{ form.email(class="form-input", placeholder="Ваш адрес эл. почты") }}
+                            {% if form.email.errors %}
+                                <div class="error-message">{{ form.email.errors[0] }}</div>
+                            {% endif %}
+                        </div>
+                        
+                        <div class="form-group">
+                            {{ form.message.label(class="form-label") }}
+                            {{ form.message(class="form-textarea", placeholder="Расскажите о вашем вопросе или предложении...", rows="5") }}
+                            {% if form.message.errors %}
+                                <div class="error-message">{{ form.message.errors[0] }}</div>
+                            {% endif %}
+                        </div>
+                        
+                        {{ form.submit(class="submit-btn") }}
+                    </form>
+                </div>
+                
+                <div class="contact-info">
+                    <h3>Другие способы связи</h3>
+                    <div class="contact-item">
+                        <div class="contact-icon">📧</div>
+                        <div class="contact-details">
+                            <strong>Email</strong>
+                            <p>sportcareermanager@gmail.com</p>
+                        </div>
+                    </div>
+                    <div class="contact-item">
+                        <div class="contact-icon">📱</div>
+                        <div class="contact-details">
+                            <strong>Телефон</strong>
+                            <p>+7 (925) 208-21-39</p>
+                        </div>
+                    </div>
+                    <div class="contact-item">
+                        <div class="contact-icon">🕒</div>
+                        <div class="contact-details">
+                            <strong>Время работы</strong>
+                            <p>Пн-Пт: 9:00 - 18:00</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        {% endblock %}
+    </main>
+
+    <footer>
+        <p>🏆 SportCareer</p>
+    </footer>
+</body>
+</html>

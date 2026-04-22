@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Чат с {{ other_user.name }} - SportCareer</title>
+    <link rel="stylesheet" href="/static/style.css">
+    <style>
+        .chat-container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+        }
+        
+        .chat-header {
+            background: linear-gradient(135deg, #3498db, #2980b9);
+            color: white;
+            padding: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+        
+        .chat-avatar {
+            width: 50px;
+            height: 50px;
+            background: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.3rem;
+            color: #3498db;
+            font-weight: bold;
+        }
+        
+        .chat-user-info {
+            flex: 1;
+        }
+        
+        .chat-user-name {
+            font-size: 1.3rem;
+            font-weight: bold;
+            margin-bottom: 0.2rem;
+        }
+        
+        .chat-user-sport {
+            font-size: 0.9rem;
+            opacity: 0.9;
+        }
+        
+        .messages-area {
+            height: 500px;
+            overflow-y: auto;
+            padding: 1.5rem;
+            background: #f8f9fa;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .message {
+            max-width: 70%;
+            margin-bottom: 1rem;
+            padding: 0.8rem 1.2rem;
+            border-radius: 18px;
+            position: relative;
+            word-wrap: break-word;
+        }
+        
+        .message.sent {
+            align-self: flex-end;
+            background: linear-gradient(135deg, #3498db, #2980b9);
+            color: white;
+            border-bottom-right-radius: 4px;
+        }
+        
+        .message.received {
+            align-self: flex-start;
+            background: white;
+            color: #2c3e50;
+            border-bottom-left-radius: 4px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        }
+        
+        .message-time {
+            font-size: 0.7rem;
+            margin-top: 0.3rem;
+            opacity: 0.7;
+            text-align: right;
+        }
+        
+        .chat-input-area {
+            padding: 1.5rem;
+            background: white;
+            border-top: 1px solid #eee;
+        }
+        
+        .chat-form {
+            display: flex;
+            gap: 1rem;
+        }
+        
+        .chat-input {
+            flex: 1;
+            padding: 1rem 1.2rem;
+            border: 2px solid #e1e8ed;
+            border-radius: 25px;
+            font-size: 1rem;
+            transition: all 0.3s;
+        }
+        
+        .chat-input:focus {
+            outline: none;
+            border-color: #3498db;
+            box-shadow: 0 0 0 3px rgba(52,152,219,0.1);
+        }
+        
+        .chat-send-btn {
+            padding: 1rem 2rem;
+            background: linear-gradient(135deg, #3498db, #2980b9);
+            color: white;
+            border: none;
+            border-radius: 25px;
+            font-size: 1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .chat-send-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(52,152,219,0.3);
+        }
+        
+        .back-to-messages {
+            display: inline-block;
+            margin-bottom: 1rem;
+            color: #3498db;
+            text-decoration: none;
+            font-weight: 500;
+        }
+        
+        .back-to-messages:hover {
+            text-decoration: underline;
+        }
+        
+        .date-separator {
+            text-align: center;
+            margin: 1rem 0;
+            color: #888;
+            font-size: 0.85rem;
+            position: relative;
+        }
+        
+        .date-separator::before,
+        .date-separator::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background: #ddd;
+            margin: 0 1rem;
+        }
+        
+        .date-separator span {
+            background: #f8f9fa;
+            padding: 0 1rem;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <nav>
+            <a href="/" class="logo-link">
+                <div class="logo-text">🏆 SportCareer</div>
+            </a>
+            <ul>
+                <li><a href="/">Главная</a></li>
+                <li><a href="/about">О нас</a></li>
+                <li><a href="/contact">Контакты</a></li>
+                <li><a href="/profile" style="color: #3498db;">Мой профиль</a></li>
+                <li><a href="/search" style="color: #e74c3c; font-weight: bold;">🔍 Поиск</a></li>
+                <li><a href="/favorites" style="color: #f39c12; font-weight: bold;">⭐ Избранное</a></li>
+                <li><a href="/messages" style="color: #2ecc71; font-weight: bold;">✉️ Сообщения</a></li>
+                <li><a href="/logout" style="color: #e74c3c;">Выйти</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main>
+        {% block content %}
+        <div class="content-block" style="padding: 1rem;">
+            <a href="/messages" class="back-to-messages">← Назад к списку сообщений</a>
+            
+            <div class="chat-container">
+                <div class="chat-header">
+                    <div class="chat-avatar">
+                        {{ other_user.name[0] }}{{ other_user.surname[0] }}
+                    </div>
+                    <div class="chat-user-info">
+                        <div class="chat-user-name">{{ other_user.name }} {{ other_user.surname }}</div>
+                        <div class="chat-user-sport">
+                            {% if other_user.sport == 'football' %}⚽ Футбол
+                            {% elif other_user.sport == 'basketball' %}🏀 Баскетбол
+                            {% elif other_user.sport == 'volleyball' %}🏐 Волейбол
+                            {% elif other_user.sport == 'hockey' %}🏒 Хоккей
+                            {% elif other_user.sport == 'tennis' %}🎾 Теннис
+                            {% else %}🤸 {{ other_user.sport }}
+                            {% endif %}
+                            • {{ other_user.city }}
+                        </div>
+                    </div>
+                    <a href="/profile/{{ other_user.id }}" style="color: white; text-decoration: none; padding: 0.5rem 1rem; background: rgba(255,255,255,0.2); border-radius: 20px; font-size: 0.9rem;">
+                        Профиль
+                    </a>
+                </div>
+                
+                <div class="messages-area" id="messages-area">
+                    {% set current_date = None %}
+                    {% for message in messages %}
+                        {% set message_date = message.timestamp.strftime('%d.%m.%Y') %}
+                        {% if message_date != current_date %}
+                            {% set current_date = message_date %}
+                            <div class="date-separator">
+                                <span>{{ message.timestamp.strftime('%d %B %Y') }}</span>
+                            </div>
+                        {% endif %}
+                        
+                        <div class="message {% if message.sender_id == current_user.id %}sent{% else %}received{% endif %}">
+                            {{ message.content }}
+                            <div class="message-time">
+                                {{ message.timestamp.strftime('%H:%M') }}
+                                {% if message.sender_id == current_user.id and message.is_read %}
+                                    ✓✓
+                                {% elif message.sender_id == current_user.id %}
+                                    ✓
+                                {% endif %}
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+                
+                <div class="chat-input-area">
+                    <form method="POST" action="/messages/{{ other_user.id }}" class="chat-form" id="message-form">
+                        <input type="text" name="content" class="chat-input" placeholder="Напишите сообщение..." required autocomplete="off">
+                        <button type="submit" class="chat-send-btn">Отправить</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+        {% endblock %}
+    </main>
+
+    <footer>
+        <p>🏆 SportCareer</p>
+    </footer>
+    
+    <script>
+        // Скролл к последнему сообщению
+        var messagesArea = document.getElementById('messages-area');
+        messagesArea.scrollTop = messagesArea.scrollHeight;
+        
+        // Очистка поля ввода после отправки
+        document.getElementById('message-form').addEventListener('submit', function() {
+            setTimeout(function() {
+                document.querySelector('.chat-input').value = '';
+            }, 100);
+        });
+        
+        // Обновление счетчика непрочитанных сообщений
+        function updateUnreadCount() {
+            fetch('/api/unread_count')
+                .then(response => response.json())
+                .then(data => {
+                    const badge = document.getElementById('unread-badge');
+                    if (badge) {
+                        if (data.count > 0) {
+                            badge.textContent = data.count;
+                            badge.style.display = 'inline';
+                        } else {
+                            badge.style.display = 'none';
+                        }
+                    }
+                })
+                .catch(error => console.error('Ошибка:', error));
+        }
+        
+        // Обновляем счетчик каждые 30 секунд
+        setInterval(updateUnreadCount, 30000);
+    </script>
+</body>
+</html>

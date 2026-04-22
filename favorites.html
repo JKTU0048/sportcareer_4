@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Мои избранные - SportCareer</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body class="page-sport">
+    <header>
+        <nav>
+            <a href="/" class="logo-link">
+                <div class="logo-text">🏆 SportCareer</div>
+            </a>
+            <ul>
+                <li><a href="/">Главная</a></li>
+                <li><a href="/about">О нас</a></li>
+                <li><a href="/contact">Контакты</a></li>
+                {% if session.user_id %}
+                    <li><a href="/profile" style="color: #3498db;">Мой профиль</a></li>
+                    <li><a href="/search" style="color: #e74c3c; font-weight: bold;">🔍 Поиск</a></li>
+                    <li><a href="/favorites" style="color: #f39c12; font-weight: bold;">⭐ Избранное</a></li>
+                    <li><a href="/messages" style="color: #2ecc71; font-weight: bold;">✉️ Сообщения</a></li>
+                    <li><a href="/logout" style="color: #e74c3c;">Выйти</a></li>
+                {% else %}
+                    <li><a href="/login" style="color: #2ecc71;">Войти</a></li>
+                {% endif %}
+            </ul>
+        </nav>
+    </header>
+
+    <main>
+        <div class="content-block">
+            <h1 style="text-align: center; margin-bottom: 1rem;">⭐ Мои избранные</h1>
+            
+            <div style="text-align: center; margin-bottom: 2rem;">
+                <a href="/search" class="back-btn" style="background-color: #e74c3c; margin-right: 1rem;">🔍 Найти ещё</a>
+                <a href="/profile" class="back-btn" style="background-color: #3498db;">👤 Мой профиль</a>
+            </div>
+            
+            {% if favorites %}
+                <div class="stats-info" style="margin-bottom: 2rem; text-align: center;">
+                    <p style="font-size: 1.2rem; color: #666;">
+                        У вас <strong>{{ favorites|length }}</strong> избранных 
+                        {% if current_user.profile_type == 'seeker' %}
+                            спортсменов
+                        {% else %}
+                            команд
+                        {% endif %}
+                    </p>
+                </div>
+                
+                {% for user in favorites %}
+                <div class="user-card" id="user-{{ user.id }}">
+                    <div class="user-header">
+                        <div class="user-name">
+                            {{ user.name }} {{ user.surname }}
+                            {% if user.level %}
+                                <span class="level-badge level-{{ user.level }}">
+                                    {% if user.level == 'beginner' %}Начинающий
+                                    {% elif user.level == 'amateur' %}Любитель
+                                    {% elif user.level == 'professional' %}Профессионал
+                                    {% endif %}
+                                </span>
+                            {% endif %}
+                        </div>
+                        <div class="user-sport">
+                            {% if user.sport == 'football' %}⚽ Футбол
+                            {% elif user.sport == 'basketball' %}🏀 Баскетбол
+                            {% elif user.sport == 'volleyball' %}🏐 Волейбол
+                            {% elif user.sport == 'hockey' %}🏒 Хоккей
+                            {% elif user.sport == 'tennis' %}🎾 Теннис
+                            {% elif user.sport == 'other' %}🤸 Другой
+                            {% else %}{{ user.sport }}
+                            {% endif %}
+                        </div>
+                    </div>
+                    
+                    <div class="user-details">
+                        <div class="detail-item">
+                            <i>📍</i>
+                            <span>{{ user.city }}</span>
+                        </div>
+                        
+                        <div class="detail-item">
+                            <i>🎯</i>
+                            <span>
+                                {% if user.goals == 'team' %}Ищет команду
+                                {% elif user.goals == 'partner' %}Ищет напарника
+                                {% elif user.goals == 'coach' %}Ищет тренера
+                                {% elif user.goals == 'participant' %}Ищет участника
+                                {% else %}{{ user.goals }}
+                                {% endif %}
+                            </span>
+                        </div>
+                        
+                        {% if user.position %}
+                        <div class="detail-item">
+                            <i>🏅</i>
+                            <span>{{ user.position }}</span>
+                        </div>
+                        {% endif %}
+                        
+                        {% if user.experience %}
+                        <div class="detail-item">
+                            <i>📅</i>
+                            <span>Опыт: {{ user.experience }} лет</span>
+                        </div>
+                        {% endif %}
+                    </div>
+                    
+                    {% if user.about %}
+                    <div style="margin: 1rem 0; padding: 1rem; background: #f8f9fa; border-radius: 8px; border-left: 3px solid #3498db;">
+                        <strong>📝 О себе:</strong>
+                        <p style="margin-top: 0.5rem; color: #666; font-size: 0.95rem;">
+                            {{ user.about[:150] }}{% if user.about|length > 150 %}...{% endif %}
+                        </p>
+                    </div>
+                    {% endif %}
+                    
+                    <div class="user-actions">
+                        <button class="submit-btn" onclick="removeFromFavorites('{{ user.id }}')" 
+                                style="background-color: #e74c3c;">
+                            ❌ Удалить из избранного
+                        </button>
+                        <a href="/profile/{{ user.id }}" class="back-btn" style="background-color: #3498db; text-decoration: none;">
+                            👁️ Профиль
+                        </a>
+                        <!-- ИСПРАВЛЕНО: прямая ссылка на чат -->
+                        <a href="/messages/{{ user.id }}" class="back-btn" style="background-color: #2ecc71; text-decoration: none;">
+                            ✉️ Написать
+                        </a>
+                    </div>
+                </div>
+                {% endfor %}
+                
+            {% else %}
+                <div class="empty-results" style="text-align: center; padding: 4rem 2rem;">
+                    <div style="font-size: 5rem; color: #f1c40f; margin-bottom: 1rem;">⭐</div>
+                    <h3 style="color: #2c3e50; margin-bottom: 1rem;">Избранное пустое</h3>
+                    <p style="color: #666; margin-bottom: 2rem; font-size: 1.1rem;">
+                        Вы ещё не добавили никого в избранное.<br>
+                        Найдите интересных спортсменов или команды и добавьте их сюда!
+                    </p>
+                    <a href="/search" class="submit-btn" style="display: inline-block; text-decoration: none;">
+                        🔍 Перейти к поиску
+                    </a>
+                </div>
+            {% endif %}
+            
+            <div style="text-align: center; margin-top: 2rem;">
+                <a href="/search" class="back-btn" style="margin-right: 1rem;">🔍 Найти ещё</a>
+                <a href="/profile" class="back-btn" style="background-color: #3498db;">👤 Мой профиль</a>
+                <a href="/" class="back-btn" style="background-color: #95a5a6; margin-left: 1rem;">🏠 На главную</a>
+            </div>
+        </div>
+    </main>
+
+    <footer>
+        <p>🏆 SportCareer</p>
+    </footer>
+    
+    <script>
+        function removeFromFavorites(userId) {
+            if (!confirm('Удалить из избранного?')) {
+                return;
+            }
+            
+            fetch('/api/remove_favorite/' + userId, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                }
+            })
+            .then(function(response) {
+                return response.json();
+            })
+            .then(function(data) {
+                if (data.success) {
+                    alert('✅ Удалено из избранного');
+                    var card = document.getElementById('user-' + userId);
+                    if (card) {
+                        card.style.opacity = '0';
+                        card.style.transform = 'translateX(100px)';
+                        setTimeout(function() {
+                            card.remove();
+                        }, 300);
+                    }
+                } else {
+                    alert('❌ Ошибка: ' + data.message);
+                }
+            })
+            .catch(function(error) {
+                console.error('Ошибка:', error);
+                alert('❌ Произошла ошибка');
+            });
+        }
+        
+        document.addEventListener('DOMContentLoaded', function() {
+            var cards = document.querySelectorAll('.user-card');
+            cards.forEach(function(card, index) {
+                card.style.opacity = '0';
+                card.style.transform = 'translateY(20px)';
+                
+                setTimeout(function() {
+                    card.style.transition = 'all 0.5s ease';
+                    card.style.opacity = '1';
+                    card.style.transform = 'translateY(0)';
+                }, index * 100);
+            });
+        });
+    </script>
+</body>
+</html>

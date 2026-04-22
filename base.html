@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}SportCareer{% endblock %}</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+    <header>
+        <nav>
+            <a href="/" class="logo-link">
+                <div class="logo-text">🏆 SportCareer</div>
+            </a>
+            <ul>
+                <li><a href="/">Главная</a></li>
+                <li><a href="/about">О нас</a></li>
+                <li><a href="/contact">Контакты</a></li>
+                {% if session.user_id %}
+                    <li><a href="/profile" style="color: #3498db;">Мой профиль</a></li>
+                    <li><a href="/search" style="color: #e74c3c; font-weight: bold;">🔍 Поиск</a></li>
+                    
+                    {% if session.profile_type == 'volunteer' %}
+                        <li><a href="/volunteer" style="color: #3498db; font-weight: bold;">👥 Искать команды</a></li>
+                    {% else %}
+                        <li><a href="/create_profile" style="color: #3498db; font-weight: bold;">📝 Создать анкету</a></li>
+                    {% endif %}
+                    
+                    <li><a href="/favorites" style="color: #f39c12; font-weight: bold;">⭐ Избранное</a></li>
+                    
+                    <!-- НОВОЕ: Ссылка на сообщения с счетчиком -->
+                    <li>
+                        <a href="/messages" style="color: #2ecc71; font-weight: bold; position: relative;" id="messages-link">
+                            ✉️ Сообщения
+                            <span id="unread-badge" style="display: none; position: absolute; top: -8px; right: -10px; background-color: #e74c3c; color: white; border-radius: 50%; padding: 2px 6px; font-size: 0.7rem; font-weight: bold;">0</span>
+                        </a>
+                    </li>
+                    
+                    <li><a href="/logout" style="color: #e74c3c;">Выйти</a></li>
+                {% else %}
+                    <li><a href="/login" style="color: #2ecc71;">Войти</a></li>
+                    <li><a href="/register" style="color: #3498db;">Регистрация</a></li>
+                {% endif %}
+            </ul>
+        </nav>
+    </header>
+
+    <main>
+        <!-- Flash-сообщения только здесь, в базовом шаблоне -->
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                <div class="flash-messages">
+                    {% for category, message in messages %}
+                        <div class="flash-message {{ category }}">
+                            {{ message }}
+                        </div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        {% endwith %}
+        
+        {% block content %}{% endblock %}
+    </main>
+
+    <footer>
+        <p>🏆 SportCareer</p>
+    </footer>
+    
+    {% block scripts %}{% endblock %}
+    
+    <!-- НОВЫЙ СКРИПТ: Обновление счетчика сообщений -->
+    {% if session.user_id %}
+    <script>
+        // Функция для обновления счетчика непрочитанных сообщений
+        function updateUnreadCount() {
+            fetch('/api/unread_count')
+                .then(response => response.json())
+                .then(data => {
+                    const badge = document.getElementById('unread-badge');
+                    if (data.count > 0) {
+                        badge.textContent = data.count;
+                        badge.style.display = 'inline';
+                    } else {
+                        badge.style.display = 'none';
+                    }
+                })
+                .catch(error => console.error('Ошибка при обновлении счетчика:', error));
+        }
+        
+        // Обновляем при загрузке страницы
+        document.addEventListener('DOMContentLoaded', updateUnreadCount);
+        
+        // Обновляем каждые 30 секунд
+        setInterval(updateUnreadCount, 30000);
+    </script>
+    {% endif %}
+</body>
+</html>

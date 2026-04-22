@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Сообщения - SportCareer</title>
+    <link rel="stylesheet" href="/static/style.css">
+    <style>
+        .messages-container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        
+        .chat-item {
+            display: flex;
+            align-items: center;
+            padding: 1.5rem;
+            background: white;
+            border-radius: 12px;
+            margin-bottom: 1rem;
+            text-decoration: none;
+            color: inherit;
+            transition: all 0.3s ease;
+            border-left: 4px solid transparent;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+        
+        .chat-item:hover {
+            transform: translateX(5px);
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+        }
+        
+        .chat-item.unread {
+            border-left-color: #3498db;
+            background: rgba(52, 152, 219, 0.05);
+        }
+        
+        .chat-avatar {
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, #3498db, #2980b9);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            color: white;
+            font-weight: bold;
+            margin-right: 1.5rem;
+            flex-shrink: 0;
+        }
+        
+        .chat-info {
+            flex: 1;
+        }
+        
+        .chat-name {
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: #2c3e50;
+            margin-bottom: 0.3rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .chat-last-message {
+            color: #666;
+            font-size: 0.95rem;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            max-width: 400px;
+        }
+        
+        .chat-meta {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+            margin-left: 1rem;
+        }
+        
+        .chat-time {
+            color: #888;
+            font-size: 0.85rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        .unread-badge {
+            background-color: #e74c3c;
+            color: white;
+            border-radius: 50%;
+            padding: 4px 8px;
+            font-size: 0.8rem;
+            font-weight: bold;
+            min-width: 24px;
+            text-align: center;
+        }
+        
+        .sport-tag {
+            font-size: 0.8rem;
+            color: #3498db;
+            background: rgba(52, 152, 219, 0.1);
+            padding: 2px 10px;
+            border-radius: 12px;
+        }
+        
+        .empty-messages {
+            text-align: center;
+            padding: 4rem 2rem;
+            background: white;
+            border-radius: 12px;
+        }
+        
+        .empty-icon {
+            font-size: 5rem;
+            color: #f1c40f;
+            margin-bottom: 1rem;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <nav>
+            <a href="/" class="logo-link">
+                <div class="logo-text">🏆 SportCareer</div>
+            </a>
+            <ul>
+                <li><a href="/">Главная</a></li>
+                <li><a href="/about">О нас</a></li>
+                <li><a href="/contact">Контакты</a></li>
+                <li><a href="/profile" style="color: #3498db;">Мой профиль</a></li>
+                <li><a href="/search" style="color: #e74c3c; font-weight: bold;">🔍 Поиск</a></li>
+                <li><a href="/favorites" style="color: #f39c12; font-weight: bold;">⭐ Избранное</a></li>
+                <li><a href="/messages" style="color: #2ecc71; font-weight: bold;">✉️ Сообщения</a></li>
+                <li><a href="/logout" style="color: #e74c3c;">Выйти</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main>
+        {% block content %}
+        <div class="content-block">
+            <h1 style="text-align: center; margin-bottom: 2rem;">✉️ Мои сообщения</h1>
+            
+            <div class="messages-container">
+                {% if chats %}
+                    {% for chat in chats %}
+                    <a href="/messages/{{ chat.user.id }}" class="chat-item {% if chat.unread_count > 0 %}unread{% endif %}">
+                        <div class="chat-avatar">
+                            {{ chat.user.name[0] }}{{ chat.user.surname[0] }}
+                        </div>
+                        
+                        <div class="chat-info">
+                            <div class="chat-name">
+                                {{ chat.user.name }} {{ chat.user.surname }}
+                                <span class="sport-tag">
+                                    {% if chat.user.sport == 'football' %}⚽ Футбол
+                                    {% elif chat.user.sport == 'basketball' %}🏀 Баскетбол
+                                    {% elif chat.user.sport == 'volleyball' %}🏐 Волейбол
+                                    {% elif chat.user.sport == 'hockey' %}🏒 Хоккей
+                                    {% elif chat.user.sport == 'tennis' %}🎾 Теннис
+                                    {% else %}🤸 {{ chat.user.sport }}
+                                    {% endif %}
+                                </span>
+                            </div>
+                            
+                            {% if chat.last_message %}
+                            <div class="chat-last-message">
+                                {% if chat.last_message.sender_id == current_user.id %}
+                                    <span style="color: #888;">Вы:</span>
+                                {% endif %}
+                                {{ chat.last_message.content }}
+                            </div>
+                            {% else %}
+                            <div class="chat-last-message" style="color: #aaa;">
+                                Нет сообщений
+                            </div>
+                            {% endif %}
+                        </div>
+                        
+                        <div class="chat-meta">
+                            {% if chat.last_message %}
+                            <div class="chat-time">
+                                {{ chat.last_message.formatted_time() }}
+                            </div>
+                            {% endif %}
+                            
+                            {% if chat.unread_count > 0 %}
+                            <div class="unread-badge">
+                                {{ chat.unread_count }}
+                            </div>
+                            {% endif %}
+                        </div>
+                    </a>
+                    {% endfor %}
+                {% else %}
+                    <div class="empty-messages">
+                        <div class="empty-icon">✉️</div>
+                        <h3 style="color: #2c3e50; margin-bottom: 1rem;">У вас пока нет сообщений</h3>
+                        <p style="color: #666; margin-bottom: 2rem; font-size: 1.1rem;">
+                            Начните общение! Найдите интересных спортсменов или команды<br>
+                            и напишите им первое сообщение.
+                        </p>
+                        <a href="/search" class="submit-btn" style="display: inline-block; text-decoration: none;">
+                            🔍 Перейти к поиску
+                        </a>
+                    </div>
+                {% endif %}
+            </div>
+            
+            <div style="text-align: center; margin-top: 2rem;">
+                <a href="/search" class="back-btn" style="margin-right: 1rem;">🔍 Найти людей</a>
+                <a href="/profile" class="back-btn" style="background-color: #3498db;">👤 Мой профиль</a>
+                <a href="/" class="back-btn" style="background-color: #95a5a6; margin-left: 1rem;">🏠 На главную</a>
+            </div>
+        </div>
+        {% endblock %}
+    </main>
+
+    <footer>
+        <p>🏆 SportCareer</p>
+    </footer>
+</body>
+</html>
